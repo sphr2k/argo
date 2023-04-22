@@ -318,6 +318,9 @@ kind: Service
 metadata:
   annotations:
     kluctl.io/deployment-item-dir: core/ingress-nginx/manifests
+    kubernetes.io/elb.id: dd8f1d35-d440-4392-8b86-c0cd0a128c82
+    kubernetes.io/elb.ip: 80.158.35.27
+    kubernetes.io/elb.subnet-id: d31fba66-6f46-4f3d-81eb-b1a206134515
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: ingress-nginx
@@ -333,6 +336,7 @@ metadata:
   name: ingress-nginx-controller
   namespace: ingress-nginx
 spec:
+  externalTrafficPolicy: Local
   ipFamilies:
     - IPv4
   ipFamilyPolicy: SingleStack
@@ -358,9 +362,6 @@ kind: Deployment
 metadata:
   annotations:
     kluctl.io/deployment-item-dir: core/ingress-nginx/manifests
-    kubernetes.io/elb.id: dd8f1d35-d440-4392-8b86-c0cd0a128c82
-    kubernetes.io/elb.ip: 80.158.35.27
-    kubernetes.io/elb.subnet-id: d31fba66-6f46-4f3d-81eb-b1a206134515
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: ingress-nginx
