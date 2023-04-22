@@ -1,0 +1,220 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: speechToText
+    chart: speechToText
+    release: cognitive-services
+  name: speech-to-text-poddisruptionbudget
+  namespace: cognitive-services
+spec:
+  maxUnavailable: 20%
+  selector:
+    matchLabels:
+      app: speechToText
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: textToSpeech
+    chart: textToSpeech
+    release: cognitive-services
+  name: text-to-speech-poddisruptionbudget
+  namespace: cognitive-services
+spec:
+  maxUnavailable: 20%
+  selector:
+    matchLabels:
+      app: textToSpeech
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: speechToText
+    chart: speechToText
+    release: cognitive-services
+  name: speech-to-text
+  namespace: cognitive-services
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: speechToText
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: textToSpeech
+    chart: textToSpeech
+    release: cognitive-services
+  name: text-to-speech
+  namespace: cognitive-services
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: textToSpeech
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: speechToText
+    chart: speechToText
+    release: cognitive-services
+  name: speech-to-text
+  namespace: cognitive-services
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: speechToText
+  template:
+    metadata:
+      labels:
+        app: speechToText
+    spec:
+      containers:
+        - args:
+            - eula=accept
+            - billing=https://westeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken
+            - apikey=${AZURE_APIKEY}
+          env:
+            - name: DECODER_MAX_COUNT
+              value: "2"
+          image: mtr.devops.telekom.de/sca/mcr.microsoft.com/azure-cognitive-services/speechservices/speech-to-text:3.13.0-amd64-de-de
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          name: speech-to-text-container
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 20
+          resources:
+            limits:
+              cpu: 5000m
+              memory: 8Gi
+            requests:
+              cpu: 2500m
+              memory: 4Gi
+      imagePullSecrets: null
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: textToSpeech
+    chart: textToSpeech
+    release: cognitive-services
+  name: text-to-speech
+  namespace: cognitive-services
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: textToSpeech
+  template:
+    metadata:
+      labels:
+        app: textToSpeech
+    spec:
+      containers:
+        - args:
+            - eula=accept
+            - billing=https://westeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken
+            - apikey=${AZURE_APIKEY}
+          image: mtr.devops.telekom.de/sca/mcr.microsoft.com/azure-cognitive-services/speechservices/text-to-speech:1.16.0-amd64-de-de-hedda
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          name: text-to-speech-container
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 10
+          resources:
+            limits:
+              cpu: 2400m
+              memory: 3Gi
+            requests:
+              cpu: 1200m
+              memory: 2Gi
+      imagePullSecrets: null
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: speechToText
+    chart: speechToText
+    release: cognitive-services
+  name: speech-to-text-autoscaler
+  namespace: cognitive-services
+spec:
+  maxReplicas: 10
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 50
+          type: Utilization
+      type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: speech-to-text
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: textToSpeech
+    chart: textToSpeech
+    release: cognitive-services
+  name: text-to-speech-autoscaler
+  namespace: cognitive-services
+spec:
+  maxReplicas: 10
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 50
+          type: Utilization
+      type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: text-to-speech

@@ -1,0 +1,5 @@
+patches:
+  - helm-patches.yml
+resources:
+  - helm-rendered.yml
+  - ingress.yml

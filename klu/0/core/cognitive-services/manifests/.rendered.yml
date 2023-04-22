@@ -1,0 +1,354 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    app: speechToText
+    chart: speechToText
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+    release: cognitive-services
+  name: speech-to-text-poddisruptionbudget
+  namespace: cognitive-services
+spec:
+  maxUnavailable: 20%
+  selector:
+    matchLabels:
+      app: speechToText
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    app: textToSpeech
+    chart: textToSpeech
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+    release: cognitive-services
+  name: text-to-speech-poddisruptionbudget
+  namespace: cognitive-services
+spec:
+  maxUnavailable: 20%
+  selector:
+    matchLabels:
+      app: textToSpeech
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    app: speechToText
+    chart: speechToText
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+    release: cognitive-services
+  name: speech-to-text
+  namespace: cognitive-services
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: speechToText
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    app: textToSpeech
+    chart: textToSpeech
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+    release: cognitive-services
+  name: text-to-speech
+  namespace: cognitive-services
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: textToSpeech
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    app: speechToText
+    chart: speechToText
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+    release: cognitive-services
+  name: speech-to-text
+  namespace: cognitive-services
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: speechToText
+  template:
+    metadata:
+      labels:
+        app: speechToText
+    spec:
+      containers:
+        - args:
+            - eula=accept
+            - billing=https://westeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken
+            - apikey=${AZURE_APIKEY}
+          env:
+            - name: DECODER_MAX_COUNT
+              value: "2"
+          envFrom:
+            - secretRef:
+                name: azure-credentials
+          image: mtr.devops.telekom.de/sca/mcr.microsoft.com/azure-cognitive-services/speechservices/speech-to-text:3.13.0-amd64-de-de
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          name: speech-to-text-container
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 20
+          resources:
+            limits:
+              cpu: 5000m
+              memory: 8Gi
+            requests:
+              cpu: 2500m
+              memory: 4Gi
+      imagePullSecrets:
+        - name: mtr-registry-cred
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    app: textToSpeech
+    chart: textToSpeech
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+    release: cognitive-services
+  name: text-to-speech
+  namespace: cognitive-services
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: textToSpeech
+  template:
+    metadata:
+      labels:
+        app: textToSpeech
+    spec:
+      containers:
+        - args:
+            - eula=accept
+            - billing=https://westeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken
+            - apikey=${AZURE_APIKEY}
+          envFrom:
+            - secretRef:
+                name: azure-credentials
+          image: mtr.devops.telekom.de/sca/mcr.microsoft.com/azure-cognitive-services/speechservices/text-to-speech:1.16.0-amd64-de-de-hedda
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          name: text-to-speech-container
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: 5000
+            initialDelaySeconds: 10
+          resources:
+            limits:
+              cpu: 2400m
+              memory: 3Gi
+            requests:
+              cpu: 1200m
+              memory: 2Gi
+      imagePullSecrets:
+        - name: mtr-registry-cred
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    app: speechToText
+    chart: speechToText
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+    release: cognitive-services
+  name: speech-to-text-autoscaler
+  namespace: cognitive-services
+spec:
+  maxReplicas: 10
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 50
+          type: Utilization
+      type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: speech-to-text
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    app: textToSpeech
+    chart: textToSpeech
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+    release: cognitive-services
+  name: text-to-speech-autoscaler
+  namespace: cognitive-services
+spec:
+  maxReplicas: 10
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 50
+          type: Utilization
+      type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: text-to-speech
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-type: basic
+  labels:
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+  name: speech-to-text
+  namespace: cognitive-services
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: speech-dev.sca-voice.telekom-dienste.de
+      http:
+        paths:
+          - backend:
+              service:
+                name: speech-to-text
+                port:
+                  name: http
+            path: /asr
+            pathType: Prefix
+  tls:
+    - hosts:
+        - speech-dev.sca-voice.telekom-dienste.de
+      secretName: speech-dev-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-type: basic
+  labels:
+    kluctl.io/deployment: cognitive-services
+    kluctl.io/discriminator: sca-dev
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+  name: text-to-speech
+  namespace: cognitive-services
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: speech-dev.sca-voice.telekom-dienste.de
+      http:
+        paths:
+          - backend:
+              service:
+                name: text-to-speech
+                port:
+                  name: http
+            path: /tts
+            pathType: Prefix
+  tls:
+    - hosts:
+        - speech-dev.sca-voice.telekom-dienste.de
+      secretName: speech-dev-tls

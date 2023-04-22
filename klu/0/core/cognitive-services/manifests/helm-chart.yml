@@ -1,0 +1,7 @@
+helmChart:
+  repo: https://microsoft.github.io/charts/repo
+  chartName: cognitive-services-speech-onpremise
+  chartVersion: 0.3.3
+  releaseName: cognitive-services
+  namespace: cognitive-services
+  output: helm-rendered.yml

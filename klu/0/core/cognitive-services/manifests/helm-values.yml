@@ -1,0 +1,30 @@
+speechToText:
+  enabled: true
+  numberOfConcurrentRequest: 2
+  optimizeForAudioFile: False
+  image:
+    registry: mtr.devops.telekom.de
+    repository: sca/mcr.microsoft.com/azure-cognitive-services/speechservices/speech-to-text
+    tag: 3.13.0-amd64-de-de
+    args:
+      eula: accept
+      billing: https://westeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken
+      # Use secret
+      apikey: "${AZURE_APIKEY}"
+  service:
+    type: ClusterIP
+textToSpeech:
+  enabled: true
+  numberOfConcurrentRequest: 2
+  optimizeForTurboMode: False
+  image:
+    registry: mtr.devops.telekom.de
+    repository: sca/mcr.microsoft.com/azure-cognitive-services/speechservices/text-to-speech
+    tag: 1.16.0-amd64-de-de-hedda
+    args:
+      eula: accept
+      billing: https://westeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken
+      # Use secret
+      apikey: "${AZURE_APIKEY}"
+  service:
+    type: ClusterIP

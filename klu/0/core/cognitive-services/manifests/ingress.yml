@@ -1,0 +1,55 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: speech-to-text
+  namespace: cognitive-services
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - speech-dev.sca-voice.telekom-dienste.de
+      secretName: speech-dev-tls
+  rules:
+    - host: speech-dev.sca-voice.telekom-dienste.de
+      http:
+        paths:
+          - path: /asr
+            pathType: Prefix
+            backend:
+              service:
+                name: speech-to-text
+                port:
+                  name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: text-to-speech
+  namespace: cognitive-services
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - speech-dev.sca-voice.telekom-dienste.de
+      secretName: speech-dev-tls
+  rules:
+    - host: speech-dev.sca-voice.telekom-dienste.de
+      http:
+        paths:
+          - path: /tts
+            pathType: Prefix
+            backend:
+              service:
+                name: text-to-speech
+                port:
+                  name: http

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speech-to-text
+  namespace: cognitive-services
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+      - name: mtr-registry-cred
+      containers:
+        - name: speech-to-text-container
+          # Add secret to env
+          envFrom:
+          - secretRef:
+              name: azure-credentials
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: text-to-speech
+  namespace: cognitive-services
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+      - name: mtr-registry-cred
+      containers:
+        - name: text-to-speech-container
+          # Add secret to env
+          envFrom:
+          - secretRef:
+              name: azure-credentials
