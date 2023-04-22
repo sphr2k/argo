@@ -20,6 +20,6 @@ controller:
     # externalTrafficPolicy required to get client IP on OTC
     externalTrafficPolicy: "Local"
     annotations:
-      kubernetes.io/elb.id: dd8f1d35-d440-4392-8b86-c0cd0a128c82
-      kubernetes.io/elb.ip: 80.158.35.27
-      kubernetes.io/elb.subnet-id: d31fba66-6f46-4f3d-81eb-b1a206134515
+      kubernetes.io/elb.id: 7147e28a-ac03-4454-9bc7-d766b2bc1a70
+      kubernetes.io/elb.ip: 80.158.50.117
+      kubernetes.io/elb.subnet-id: 627ce583-4108-4594-92ec-283b56951032
