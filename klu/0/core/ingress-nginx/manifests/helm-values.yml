@@ -1,0 +1,24 @@
+imagePullSecrets:
+  - name: mtr-registry-cred
+controller:
+  image:
+    registry: mtr.devops.telekom.de
+    image: sca/registry.k8s.io/ingress-nginx/controller
+  kind: Deployment
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: ingress-nginx
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+  # externalTrafficPolicy required to get client IP on OTC
+  externalTrafficPolicy: "Local"
+  annotations:
+    kubernetes.io/elb.id: dd8f1d35-d440-4392-8b86-c0cd0a128c82
+    kubernetes.io/elb.ip: 80.158.35.27
+    kubernetes.io/elb.subnet-id: d31fba66-6f46-4f3d-81eb-b1a206134515

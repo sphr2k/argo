@@ -4,4 +4,5 @@ helmChart:
   chartVersion: 0.3.3
   releaseName: cognitive-services
   namespace: cognitive-services
+  skipPrePull: true
   output: helm-rendered.yml

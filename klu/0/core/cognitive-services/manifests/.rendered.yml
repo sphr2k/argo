@@ -6,8 +6,7 @@ metadata:
   labels:
     app: speechToText
     chart: speechToText
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -28,8 +27,7 @@ metadata:
   labels:
     app: textToSpeech
     chart: textToSpeech
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -50,8 +48,7 @@ metadata:
   labels:
     app: speechToText
     chart: speechToText
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -76,8 +73,7 @@ metadata:
   labels:
     app: textToSpeech
     chart: textToSpeech
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -102,8 +98,7 @@ metadata:
   labels:
     app: speechToText
     chart: speechToText
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -167,8 +162,7 @@ metadata:
   labels:
     app: textToSpeech
     chart: textToSpeech
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -229,8 +223,7 @@ metadata:
   labels:
     app: speechToText
     chart: speechToText
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -260,8 +253,7 @@ metadata:
   labels:
     app: textToSpeech
     chart: textToSpeech
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -293,8 +285,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-secret: basic-auth
     nginx.ingress.kubernetes.io/auth-type: basic
   labels:
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -303,7 +294,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: speech-dev.sca-voice.telekom-dienste.de
+    - host: speech-test.sca-voice.telekom-dienste.de
       http:
         paths:
           - backend:
@@ -315,7 +306,7 @@ spec:
             pathType: Prefix
   tls:
     - hosts:
-        - speech-dev.sca-voice.telekom-dienste.de
+        - speech-test.sca-voice.telekom-dienste.de
       secretName: speech-dev-tls
 ---
 apiVersion: networking.k8s.io/v1
@@ -328,8 +319,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-secret: basic-auth
     nginx.ingress.kubernetes.io/auth-type: basic
   labels:
-    kluctl.io/deployment: cognitive-services
-    kluctl.io/discriminator: sca-dev
+    kluctl.io/discriminator: sca-test
     kluctl.io/tag-0: cognitive-services
     kluctl.io/tag-1: core
     kluctl.io/tag-2: manifests
@@ -338,7 +328,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: speech-dev.sca-voice.telekom-dienste.de
+    - host: speech-test.sca-voice.telekom-dienste.de
       http:
         paths:
           - backend:
@@ -350,5 +340,5 @@ spec:
             pathType: Prefix
   tls:
     - hosts:
-        - speech-dev.sca-voice.telekom-dienste.de
+        - speech-test.sca-voice.telekom-dienste.de
       secretName: speech-dev-tls

@@ -12,10 +12,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - speech-dev.sca-voice.telekom-dienste.de
+        - speech-test.sca-voice.telekom-dienste.de
       secretName: speech-dev-tls
   rules:
-    - host: speech-dev.sca-voice.telekom-dienste.de
+    - host: speech-test.sca-voice.telekom-dienste.de
       http:
         paths:
           - path: /asr
@@ -40,10 +40,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - speech-dev.sca-voice.telekom-dienste.de
+        - speech-test.sca-voice.telekom-dienste.de
       secretName: speech-dev-tls
   rules:
-    - host: speech-dev.sca-voice.telekom-dienste.de
+    - host: speech-test.sca-voice.telekom-dienste.de
       http:
         paths:
           - path: /tts
