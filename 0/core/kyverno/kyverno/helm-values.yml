@@ -1,0 +1,20 @@
+image:
+  registry: mtr.devops.telekom.de
+  repository: sca/ghcr.io/kyverno/kyverno
+  pullSecrets:
+  - name: mtr-registry-cred
+
+initImage:
+  registry: mtr.devops.telekom.de
+  repository: sca/ghcr.io/kyverno/kyvernopre
+
+cleanupController:
+  image:
+    registry: mtr.devops.telekom.de
+    repository: sca/ghcr.io/kyverno/cleanup-controller
+    pullSecrets:
+    - name: mtr-registry-cred
+
+# Existing Image pull secrets for image verify and imageData policies
+existingImagePullSecrets:
+- name: mtr-registry-cred
