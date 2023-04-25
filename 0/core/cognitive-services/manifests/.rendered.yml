@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    kluctl.io/deployment-item-dir: core/cognitive-services/manifests
+  labels:
+    kluctl.io/discriminator: sca-test
+    kluctl.io/tag-0: cognitive-services
+    kluctl.io/tag-1: core
+    kluctl.io/tag-2: manifests
+  name: cognitive-services
+---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:

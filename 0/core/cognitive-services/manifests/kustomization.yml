@@ -1,5 +1,6 @@
 patches:
   - helm-patches.yml
 resources:
+  - namespace.yml
   - helm-rendered.yml
   - ingress.yml
